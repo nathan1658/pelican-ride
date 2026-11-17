@@ -8,20 +8,22 @@ Ride a bicycle along a coastal boardwalk at sunrise, then take off over the surf
 
 ## Play on a phone
 
-In a run, use the direction pad with your left thumb and the four action buttons with your right. You can hold **加速** to accelerate while steering or climbing. The controls work in portrait and landscape.
+Starting a ride on a phone expands the scene to the available screen. Steer with the on-screen arrows or a connected keyboard. Drag the scenery with one finger to look around, even while another finger is on the controls. Pinch with two fingers to zoom. Pause to reset the camera, change sound or return to the film.
 
 | Action | Touch | Keyboard or mouse |
 | --- | --- | --- |
-| Change lanes | Tap left or right, or swipe sideways | A / D |
-| Jump or duck | Tap up or down, or swipe vertically | W / S |
+| Change lanes | Tap ← or → | ← / → or A / D |
+| Jump or duck | Tap ↑ or ↓ | ↑ / ↓ or W / S |
 | Take off or land | Tap 起飞 / 降落 | F |
-| Steer, climb and dive in flight | Hold a direction on the pad | Hold A / D / W / S |
+| Steer, climb and dive in flight | Hold a direction on the pad | Hold the arrow keys or WASD |
 | Accelerate | Hold 加速 | Hold Shift |
 | Barrel roll or backflip | Tap 横滚 or 后空翻 while airborne | Q / E |
-| Look around and zoom | Drag with two fingers and pinch. In the film, drag with one finger to orbit | Drag and scroll |
+| Look around and zoom | Drag with one finger to orbit, pinch to zoom | Drag and scroll |
 | Pause or resume | Tap the round playback button | Space while the scene is focused |
 
-Open the game in a browser with WebGL 2. To give it its own home-screen icon, use **Add to Home Screen** in Safari or **Install app** in a supporting Android browser. Let the first online visit finish loading and caching before playing offline. Sound is optional and starts from the speaker button.
+The corner expand button works in the film and during a ride. It requests native fullscreen when available. For an edge-to-edge iPhone game without Safari’s tab and address bars, choose **Share → Add to Home Screen**, turn on **Open as Web App**, and launch from the new icon. [Apple’s iPhone guide](https://support.apple.com/guide/iphone/iphea86e5236/ios)
+
+The game requires WebGL 2. Android browsers with installation support offer **Install app**. Let the first online visit finish loading and caching before playing offline. Sound is optional and starts from the speaker button.
 
 ## Scoring
 

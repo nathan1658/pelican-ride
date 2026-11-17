@@ -3,6 +3,7 @@ import {blastEffects} from './blast-fx.js';
 import {ejectionRig} from './ejection.js';
 import {boardwalkRun,laneZ,crashTips} from './runner.js';
 import {touchPad} from './touch-pad.js';
+import {screenMode} from './screen-mode.js';
 import {rideControls} from './ride-controls.js';
 import {prepareSunriseMap,lightCoast} from './daybreak.js';
 import {pedalBalance} from './pedal-balance.js';
@@ -31,7 +32,7 @@ function gameHud(run){
  $('flyButton').setAttribute('aria-pressed',String(flying));$('flyButton').querySelector('span').textContent=flying?'降落':'起飞';
  $('boostButton').setAttribute('aria-pressed',String(run.throttle&&state.playing));
  write('lateralGuide',flying?'转向':'换道');write('upGuide',flying?'爬升':'跳跃');write('downGuide',flying?'俯冲':'低身');
- write('swipeGuide',flying?'方向键转向升降 · 双指环视':'方向键或滑动操控 · 双指环视');
+ write('swipeGuide','方向键操控 · 单指环视 · 捏合缩放');
  for(const [key,label] of [['jump',flying?'爬升':'跳跃'],['duck',flying?'俯冲':'低身']]){
   const button=$('touchPad').querySelector('[data-drive="'+key+'"]');
   if(button.getAttribute('aria-label')!==label){button.setAttribute('aria-label',label);button.querySelector('small').textContent=label;}
@@ -39,6 +40,7 @@ function gameHud(run){
  $('runHud').style.borderColor=run.pickup>0?'#ffc87b':'';
 }
 function syncControls(){
+ $('viewer').classList.toggle('paused',!state.playing&&!course?.run.ended);
  setIcon($('play'),state.playing?'pause':'play');$('play').setAttribute('aria-label',state.playing?'暂停':'播放');$('elapsed').textContent='00:'+String(Math.floor(state.time)).padStart(2,'0');
  if(running()){
   gameHud(course.run);
@@ -121,25 +123,27 @@ shotButtons.forEach((b,i)=>b.onclick=()=>shot(i));
 slider.oninput=()=>{state.time=Number(slider.value);state.needsRender=true;syncControls();};
 slider.onpointerdown=()=>state.seeking=true;
 window.addEventListener('pointerup',()=>state.seeking=false);window.addEventListener('pointercancel',()=>state.seeking=false);
-const full=$('full'),viewer=$('viewer');
-if(!viewer.requestFullscreen&&!viewer.webkitRequestFullscreen)full.hidden=true;
-full.onclick=async()=>{try{if(document.fullscreenElement||document.webkitFullscreenElement){await(document.exitFullscreen?document.exitFullscreen():document.webkitExitFullscreen());}else{await(viewer.requestFullscreen?viewer.requestFullscreen():viewer.webkitRequestFullscreen());}}catch{full.title='此浏览器未允许全屏';}};
-function fullscreenUI(){const f=!!(document.fullscreenElement||document.webkitFullscreenElement);setIcon(full,f?'shrink':'full');full.title=f?'退出全屏':'进入全屏';full.setAttribute('aria-label',full.title);}
-document.addEventListener('fullscreenchange',fullscreenUI);document.addEventListener('webkitfullscreenchange',fullscreenUI);
+const viewer=$('viewer'),screen=screenMode(viewer,$('full'),$('homeTip'));
+$('pauseCamera').onclick=resetOrbit;
 function updateMode(){
  const active=running();$('viewer').classList.toggle('running',active);$('rideMode').setAttribute('aria-pressed',String(active));
- $('rideMode').querySelector('span').textContent=active?'返回观景':'开始骑行';$('rideMode').title=active?'返回观景':'开始无尽骑行 · W A S D';
+ $('rideMode').querySelector('span').textContent=active?'返回观景':'开始骑行';$('rideMode').title=active?'返回观景':'开始无尽骑行 · 方向键 / WASD';
  $('touchPad').hidden=$('runHud').hidden=$('runGuide').hidden=$('flightStrip').hidden=$('arcadeActions').hidden=!active;$('runEvent').hidden=true;$('resultPanel').hidden=true;resultShown=false;$('play').disabled=false;
  syncControls();audioLevel();
 }
+let autoExpanded=false;
 function beginRun(){
  if(!course)return;
- if(!running())parked={time:state.time,playing:state.playing,az:state.az,elev:state.elev,zoom:state.zoom};
+ if(!running()){
+  parked={time:state.time,playing:state.playing,az:state.az,elev:state.elev,zoom:state.zoom};
+  autoExpanded=!screen.expanded&&matchMedia('(any-pointer: coarse)').matches;
+  if(autoExpanded)screen.enter();
+ }
  clearPad();course.start();lastEvent=0;state.playing=true;resetOrbit();cut=true;updateMode();canvas.focus({preventScroll:true});
  if(audio)audio.setSpeed(course.run.speed/(lap/seconds));
 }
 function exitRun(){
- if(!running())return;clearPad();audio?.setBlast(-1);course.leave();Object.assign(state,parked);parked=null;
+ if(!running())return;clearPad();if(autoExpanded)screen.leave();autoExpanded=false;audio?.setBlast(-1);course.leave();Object.assign(state,parked);parked=null;
  cut=true;state.needsRender=true;updateMode();if(audio)audio.setSpeed(state.speed);canvas.focus({preventScroll:true});
 }
 function gameAction(move){
@@ -167,7 +171,10 @@ boost.onkeydown=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();if
 boost.onkeyup=e=>{if(e.code==='Space'||e.code==='Enter')course?.release('boost');};
 boost.onblur=()=>course?.release('boost');
 boost.oncontextmenu=e=>e.preventDefault();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&running()&&!document.fullscreenElement)exitRun();});
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ if(screen.expanded)screen.leave();else if(running())exitRun();
+});
 window.addEventListener('blur',()=>{if(running()&&state.playing){state.playing=false;syncControls();audioLevel();}});
 function assetBytes(id){const s=atob($(id).textContent.trim()),buf=new Uint8Array(s.length);for(let i=0;i<s.length;i++)buf[i]=s.charCodeAt(i);$(id).remove();return buf;}
 async function main(){

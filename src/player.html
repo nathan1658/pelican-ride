@@ -67,6 +67,49 @@ footer{flex:0 0 auto;padding:15px 0 max(15px,env(safe-area-inset-bottom));displa
 @media(any-pointer:coarse) and (max-height:460px) and (orientation:landscape){
  .touch-pad{--key:44px;left:6px;bottom:6px}.arcade-actions{right:6px;bottom:6px}.running footer{padding-bottom:max(2px,env(safe-area-inset-bottom))}
 }
+/* A long press anywhere in the player, including HUD text and SVG children, is a game input. */
+#viewer,#viewer *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#viewer button{touch-action:manipulation}
+#viewer .touch-pad button,#viewer .arcade-actions button{touch-action:none}
+.pause-help,.pause-camera{display:none}
+html.edge-to-edge,html.edge-to-edge body{overflow:hidden;overscroll-behavior:none;background:#182520}
+#viewer.immersive{--left:max(10px,env(safe-area-inset-left));--right:max(10px,env(safe-area-inset-right));--top:max(8px,env(safe-area-inset-top));--bottom:max(10px,env(safe-area-inset-bottom));position:fixed;inset:0;width:100%;height:100%;height:100dvh;min-height:0;padding:0;isolation:isolate}
+.immersive .stage{position:absolute;inset:0;border-radius:0;box-shadow:none}
+.immersive header,.immersive footer{position:absolute;z-index:4;pointer-events:none;height:auto;margin:0;padding:0}
+.immersive header{top:var(--top);right:var(--right)}
+.immersive header .identity{display:none}
+.immersive header button,.immersive footer button,.immersive footer input{pointer-events:auto}
+.immersive header button,.immersive .play{background:#23342feb;border:1px solid #fff6;color:#fff8e6}
+.immersive header button{min-width:46px;min-height:46px}
+.immersive footer{left:var(--left);right:var(--right);bottom:var(--bottom);padding:9px 10px;background:#f4f1e9ec;border-radius:7px}
+.immersive .shot,.immersive .run-hud{left:var(--left);top:var(--top)}
+.immersive.running footer{inset:var(--top) calc(var(--right) + 52px) auto auto;padding:0;background:none}
+.immersive.running .play,.immersive .full-btn{width:46px;height:46px;border-radius:50%}
+.immersive.running .run-guide,.immersive.running .top-controls>button:not(.full-btn){display:none}
+.immersive.running .top-controls .full-btn{position:absolute;top:0;right:0}
+.immersive.running .flight-strip{left:var(--left);right:auto;top:calc(var(--top) + 56px);justify-content:flex-start;max-width:75%}
+.immersive.running .event{left:var(--left);top:calc(var(--top) + 84px)}
+.immersive.running.paused .top-controls{position:absolute;right:0;top:55px;width:min(286px,calc(100vw - var(--left) - var(--right)));display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px;background:#1e302af5;color:#fff6df;border:1px solid #fff6;border-radius:10px;pointer-events:auto}
+.immersive.running.paused .top-controls .full-btn{top:-56px;right:-1px}
+.immersive.running.paused .top-controls>button:not(.full-btn){display:flex;justify-content:center;align-items:center;width:auto;min-height:44px;border:1px solid #fff5;border-radius:6px;color:#fff6df;background:#33463e}
+.immersive.running.paused .pause-help{display:grid;gap:6px;grid-column:1/-1;font-size:12px;line-height:1.5}
+.immersive.running.paused .pause-help small{color:#e4d7ba;font-size:11px}
+.immersive.running.paused .top-controls .audio-btn{grid-column:1/-1}
+.immersive.running.paused .audio-btn span{display:inline}
+.immersive .touch-pad{left:var(--left);bottom:var(--bottom)}
+.immersive .arcade-actions{right:var(--right);bottom:var(--bottom)}
+@media(any-pointer:coarse){
+ .touch-pad{--key:clamp(48px,14vw,60px);gap:4px}
+ .touch-pad svg{width:21px;height:21px}.touch-pad small{font-size:10px}
+ .arcade-actions{grid-template-columns:repeat(2,minmax(54px,1fr))}
+ .arcade-actions button{min-height:clamp(48px,13vw,56px);font-size:12px}
+}
+@media(max-width:380px){.immersive.running .run-hud{gap:6px;padding:6px 8px}.immersive.running .run-hud b{font-size:14px}}
+@media(max-height:415px) and (orientation:landscape){
+ .immersive .touch-pad{--key:50px}.immersive .arcade-actions button{min-height:50px}
+ .immersive.running.paused .top-controls{width:min(365px,70vw);grid-template-columns:repeat(3,1fr)}
+ .immersive.running.paused .top-controls .audio-btn{grid-column:auto}
+}
 </style>
 </head><body>
 <svg class="icons" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -74,9 +117,9 @@ footer{flex:0 0 auto;padding:15px 0 max(15px,env(safe-area-inset-bottom));displa
 </defs></svg>
 <main id="viewer">
 <header><div class="identity"><div class="mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5.5 26.4c3.6-.9 5.4-3.4 6.8-6.2 1.9-3.8 3.6-5.8 6.9-5.6 2.2.1 3.4 1.4 3.1 3.3-.3 2.1-2.1 4-3.5 5.4 3.4-.6 5.1-2.2 5.7-4.5l.1-4.4c.1-3.4 1.7-5.7 4.4-5.5 1.6.1 2.6 1.2 2.5 2.4l5.3 2.6-5.4-.4c1.5 1.1 3 1.3 4.8 1.2-1.9 1.8-5.2 1.1-6.8-.5-1.2.7-.8 3.4-1.1 5.8-.6 5.4-5.4 9.2-11.5 9.1-4.1-.1-7.7-.7-11.3-2.7Z"/><circle cx="29.5" cy="11.1" r=".65" fill="#9f492f"/></svg></div><h1>Pelican <em>Ride</em></h1><span class="translation">鹈鹕骑行</span></div>
-<div class="top-controls"><button id="rideMode" class="ride-mode" aria-pressed="false" title="开始无尽骑行 · W A S D" disabled><svg viewBox="0 0 24 24"><path d="m4 19 6-14h4l6 14M12 6v3m0 4v2m0 3v2"/></svg><span>开始骑行</span></button><button class="audio-btn" id="audio" aria-pressed="false" aria-label="开启海浪与骑行声" title="开启海浪与骑行声"><svg><use href="#i-soundoff"/></svg><span>环境音</span></button><button class="full-btn" id="full" aria-label="进入全屏" title="进入全屏"><svg><use href="#i-full"/></svg></button></div></header>
+<div class="top-controls"><div class="pause-help"><span>方向键操控鹈鹕，单指拖动环视，双指捏合缩放。</span><small id="homeTip" hidden>要隐藏 Safari 工具栏，请在分享菜单中选择“添加到主屏幕”，打开“作为网页 App 打开”。</small></div><button class="pause-camera" id="pauseCamera">复位镜头</button><button id="rideMode" class="ride-mode" aria-pressed="false" title="开始无尽骑行 · 方向键 / WASD" disabled><svg viewBox="0 0 24 24"><path d="m4 19 6-14h4l6 14M12 6v3m0 4v2m0 3v2"/></svg><span>开始骑行</span></button><button class="audio-btn" id="audio" aria-pressed="false" aria-label="开启海浪与骑行声" title="开启海浪与骑行声"><svg><use href="#i-soundoff"/></svg><span>环境音</span></button><button class="full-btn" id="full" aria-label="进入全屏" title="进入全屏"><svg><use href="#i-full"/></svg></button></div></header>
 <section class="stage" id="stage" aria-label="海岸木栈道上的鹈鹕骑行三维动画">
-<canvas id="film" aria-label="鹈鹕正在海边骑一辆青绿色自行车。拖动或方向键可 360° 环视，滚轮或双指缩放。按 W A S D 开始骑行。" tabindex="0"></canvas>
+<canvas id="film" aria-label="鹈鹕正在海边骑一辆青绿色自行车。单指或鼠标拖动可 360° 环视，滚轮或双指捏合缩放。使用方向键或 WASD 操控鹈鹕。" tabindex="0"></canvas>
 <div class="shot"><svg aria-hidden="true"><use href="#i-camera"/></svg><span id="shotName">跟拍镜头</span><span class="orbit-hint">拖动 360° 环视</span></div>
 <div id="runHud" class="run-hud" hidden><span class="run-points"><small>得分</small><b id="points">0</b></span><span><b id="meters">0</b><em>m</em></span><span class="shell-score" aria-label="贝壳"><svg viewBox="0 0 24 24"><path d="M10 20c-2-2-8-7-8-11 0-2 2-3 4-3 1-3 4-4 6-2 3-2 6-1 7 2 2-1 4 1 3 4-1 4-5 8-8 10zM6 8l5 9m1-12v12m6-9-5 9"/></svg><b id="shells">0</b></span><span class="velocity"><b id="velocity">29</b><em>km/h</em></span></div>
 <div class="flight-strip" id="flightStrip" hidden><span id="altTag" hidden></span><span class="shield" id="shieldTag" hidden>护盾</span><span class="magnet" id="magnetTag" hidden></span><span class="gust" id="gustTag" hidden></span><span class="combo" id="comboTag" hidden></span></div>
@@ -96,7 +139,7 @@ footer{flex:0 0 auto;padding:15px 0 max(15px,env(safe-area-inset-bottom));displa
 <div class="load" id="loading" role="status"><picture class="poster" aria-hidden="true"><source media="(max-aspect-ratio: 4/5)" srcset="__TALL_POSTER__"><img src="__WIDE_POSTER__" alt=""></picture><div class="loading-note"><span class="spin"></span><span id="status">正在准备海岸场景…</span></div></div></section>
 <footer><label class="sr-only" for="timeline">动画进度</label><input type="range" min="0" max="32" step="0.01" value="0" id="timeline" class="progress">
 <div class="bottom-controls"><div class="control-left"><button class="play" id="play" aria-label="暂停" title="播放或暂停 · 空格"><svg><use href="#i-pause"/></svg></button><div class="time"><span id="elapsed">00:00</span><span class="total"> / 00:32</span></div><button class="speed" id="speed" aria-label="播放速度 1 倍，点击切换" title="切换播放速度">1×</button></div>
-<div id="runGuide" class="run-guide" hidden><span class="key-guide" id="keyGuide"><kbd>A</kbd><kbd>D</kbd><span id="lateralGuide">换道</span><kbd>W</kbd><span id="upGuide">跳跃</span><kbd>S</kbd><span id="downGuide">低身</span><span class="extra-key"> · 拖动环视</span></span><span class="swipe-guide" id="swipeGuide">左右换道 · 上滑跳跃 · 下滑低身</span><button id="chaseView" title="回到追尾视角 · Home">复位镜头</button></div>
+<div id="runGuide" class="run-guide" hidden><span class="key-guide" id="keyGuide"><kbd>←</kbd><kbd>→</kbd><span id="lateralGuide">换道</span><kbd>↑</kbd><span id="upGuide">跳跃</span><kbd>↓</kbd><span id="downGuide">低身</span><span class="extra-key"> · 拖动环视</span></span><span class="swipe-guide" id="swipeGuide">方向键操控 · 单指环视 · 捏合缩放</span><button id="chaseView" title="回到追尾视角 · Home">复位镜头</button></div>
 <div class="camera-controls"><span class="camera-label"><svg><use href="#i-camera"/></svg>镜头</span><div class="switcher" role="group" aria-label="镜头选择"><button data-shot="0" aria-pressed="true">跟拍</button><button data-shot="1" aria-pressed="false">特写</button><button data-shot="2" aria-pressed="false">广角</button><button data-shot="3" aria-pressed="false">传动</button></div></div></div></footer>
 </main>
 <noscript>请启用 JavaScript 以播放 3D 动画。</noscript>

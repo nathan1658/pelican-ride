@@ -1,6 +1,6 @@
 const base = self.registration.scope;
 const prefix = base + 'pelican-ride:';
-const version = prefix + '31d1260c33feb53f';
+const version = prefix + 'ae65ceb1f22061fc';
 const shell = ['index.html', 'manifest.webmanifest', 'icons/pelican.svg', 'icons/pelican-180.png', 'icons/pelican-192.png', 'icons/pelican-512.png'];
 const urls = new Set(shell.map(path => new URL(path, base).href));
 const index = new URL('index.html', base).href;

@@ -29,7 +29,9 @@ async function build() {
     '<link rel="icon" href="./icons/pelican.svg" type="image/svg+xml">',
     '<link rel="apple-touch-icon" href="./icons/pelican-180.png">',
     '<link rel="manifest" href="./manifest.webmanifest">',
-    '<meta name="apple-mobile-web-app-title" content="Pelican Ride">'
+    '<meta name="apple-mobile-web-app-title" content="Pelican Ride">',
+    '<meta name="mobile-web-app-capable" content="yes">',
+    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
   ].join('\n');
   html = html.replace('<link rel="icon" href="data:,">', appHead);
   const register = `<script>
