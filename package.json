@@ -1,0 +1,12 @@
+{
+  "name": "pelican-ride",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A sunrise coastal cycling film and a touch-controlled 3D arcade game.",
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "node tests/mobile.cjs"
+  },
+  "dependencies": {"three": "0.180.0"},
+  "devDependencies": {"esbuild": "0.28.2", "playwright": "1.65.1"}
+}

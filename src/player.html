@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:,"><meta name="theme-color" content="#f5f2e9"><title>Pelican Ride · 鹈鹕骑行</title>
+<style>
+@font-face{font-family:Instrument;src:url("__SERIF__")}@font-face{font-family:Instrument;src:url("__ITALIC__");font-style:italic}
+:root{color-scheme:light;--paper:#f4f1e9;--ink:#252e28;--muted:#626961;--line:#cfcec2;--accent:#a3492c;--edge:clamp(15px,2.65vw,48px);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper)}
+*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{color:inherit;cursor:pointer;border:0;background:none;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:5px}button:hover{color:var(--accent)}svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.icons{display:none}
+main{height:100vh;height:100dvh;min-height:350px;display:flex;flex-direction:column;padding:0 var(--edge);overflow:hidden}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;height:clamp(64px,9vh,94px);flex-shrink:0}
+.identity,.top-controls,.control-left,.camera-controls,.bottom-controls,.meta{display:flex;align-items:center}
+.identity{gap:14px}.mark{width:40px;height:40px;display:grid;place-items:center;color:var(--paper);background:#9f492f;border-radius:50%}.mark svg{width:33px;height:33px;stroke:none;fill:currentColor}
+h1{font:400 clamp(29px,2.8vw,42px)/.95 Instrument,Georgia,serif;letter-spacing:-.042em;margin:0;white-space:nowrap}h1 em{font-weight:400}.translation{font-size:12px;letter-spacing:.18em;color:#666b61;border-left:1px solid var(--line);padding-left:17px;margin-left:5px}
+.top-controls{gap:16px}.audio-btn,.full-btn{height:40px;display:flex;align-items:center;justify-content:center;gap:8px}.audio-btn{padding:0 5px;font-size:12px;letter-spacing:.06em}.full-btn{width:41px;border:1px solid #cecec3;border-radius:50%}.audio-btn[aria-pressed=true]{color:var(--accent)}
+.stage{position:relative;flex:1;min-height:0;overflow:hidden;isolation:isolate;border-radius:9px;background:#bec7c4;box-shadow:0 0 0 1px rgba(36,45,39,.1)}
+.stage:after{content:"";pointer-events:none;position:absolute;inset:0;box-shadow:inset 0 0 100px rgba(35,25,24,.065);border-radius:inherit}
+canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:none}canvas:active{cursor:grabbing}
+.shot{position:absolute;left:clamp(14px,2vw,30px);top:clamp(14px,2vw,28px);display:flex;align-items:center;gap:8px;color:#fffef6;background:rgba(27,39,36,.5);border:1px solid rgba(255,255,255,.29);border-radius:4px;padding:7px 9px 7px 8px;font-size:10px;font-weight:600;letter-spacing:.1em;pointer-events:none;backdrop-filter:blur(9px)}
+.shot svg{width:14px;height:14px}.load{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:15px;background:#d8dbd0;color:#454e43;font-size:13px;letter-spacing:.08em;z-index:3}.load[hidden]{display:none}.spin{width:23px;height:23px;border-radius:50%;border:2px solid #b6b9a9;border-top-color:var(--accent);animation:turn .85s linear infinite}@keyframes turn{to{transform:rotate(1turn)}}
+footer{flex:0 0 auto;padding:15px 0 max(15px,env(safe-area-inset-bottom));display:grid;gap:10px}
+.progress{width:100%;height:12px;cursor:pointer;appearance:none;-webkit-appearance:none;background:transparent;margin:0;display:block;--pct:0%}
+.progress::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(to right,var(--accent) var(--pct),var(--line) var(--pct))}.progress::-moz-range-track{height:3px;background:var(--line)}.progress::-moz-range-progress{background:var(--accent);height:3px}
+.progress::-webkit-slider-thumb{appearance:none;width:9px;height:9px;border:0;border-radius:50%;background:var(--accent);margin-top:-3px;transition:transform .15s}.progress:hover::-webkit-slider-thumb{transform:scale(1.35)}.progress::-moz-range-thumb{border:0;background:var(--accent);width:9px;height:9px}
+.bottom-controls{justify-content:space-between;gap:12px}.control-left{gap:15px}.play{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#f4f0df;display:grid;place-items:center}.play:hover{background:#3b443a;color:white}.play svg{width:16px;height:16px;fill:currentColor;stroke:none}.time{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}.time .total{color:#85877d}.speed{font-size:12px;font-variant-numeric:tabular-nums;min-width:46px;border:1px solid var(--line);border-radius:4px;padding:4px 9px}
+.camera-controls{gap:12px}.camera-label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;letter-spacing:.06em}.camera-label svg{width:17px;height:17px}.switcher{display:flex;border:1px solid #cccec1;padding:3px;border-radius:6px;gap:2px}.switcher button{border-radius:3px;font-size:12px;padding:6px 13px;letter-spacing:.06em}.switcher button[aria-pressed=true]{background:var(--ink);color:var(--paper)}.switcher button:not([aria-pressed=true]):hover{background:#e7e5da}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.hidden,[hidden]{display:none!important}
+@media(max-width:650px){:root{--edge:12px}header{height:65px}.mark{width:34px;height:34px}.mark svg{width:28px;height:28px}.identity{gap:9px}.translation{font-size:10px;padding-left:9px;margin-left:0;letter-spacing:.06em}.top-controls{gap:5px}.audio-btn{width:34px}.audio-btn span{display:none}.full-btn{width:33px;height:33px}.full-btn svg{width:16px;height:16px}.stage{border-radius:6px}.control-left{gap:9px}.camera-label{display:none}.switcher button{padding:6px 8px;font-size:11px}.speed{min-width:35px;padding:4px 6px}.play{width:34px;height:34px}.time{font-size:10.5px}footer{padding-top:10px;gap:5px}.shot{font-size:9px}}
+@media(max-width:380px){.translation{display:none}.control-left{gap:6px}.switcher button{padding:6px}.camera-controls{gap:0}.shot{left:11px;top:11px}}
+@media(max-height:520px) and (orientation:landscape){header{height:44px}.mark{height:29px;width:29px}.mark svg{width:24px}.full-btn{width:31px;height:31px}h1{font-size:27px}footer{padding:5px 0;gap:1px}.play{width:29px;height:29px}.shot{top:10px;left:10px}.switcher button{padding:3px 10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.spin{animation:none}}
+.load{place-content:end center;padding:16px;pointer-events:none}.poster,.poster img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}.loading-note{display:flex;align-items:center;gap:9px;position:relative;background:rgba(30,37,31,.80);color:#fffdf0;border:1px solid #fffa;border-radius:5px;padding:8px 12px;max-width:37em;line-height:1.5;font-size:11px;letter-spacing:.04em;backdrop-filter:blur(10px)}.spin{width:14px;height:14px;border-color:#a5a69a;border-top-color:#ffdfae;flex:none}button:disabled,input:disabled{opacity:.48;cursor:default}
+.ride-mode{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 14px;border-radius:20px;background:var(--ink);color:var(--paper);font-size:12px;font-weight:600;white-space:nowrap}.ride-mode svg{width:17px;height:17px}.ride-mode:hover{color:#fff;background:#495344}.ride-mode[aria-pressed=true]{background:transparent;color:var(--ink);border:1px solid var(--line)}.orbit-hint{border-left:1px solid #fff5;padding-left:8px;font-weight:400;letter-spacing:0}
+.run-hud{position:absolute;top:16px;left:16px;display:flex;align-items:center;gap:16px;color:#fffae9;background:#25332de0;border:1px solid #ffffff55;border-radius:8px;padding:10px 14px;backdrop-filter:blur(10px);pointer-events:none}.run-hud>span{display:flex;align-items:baseline;gap:6px}.run-hud small{font-size:11px}.run-hud b{font:600 18px/1.1 ui-monospace,monospace;font-variant-numeric:tabular-nums}.run-hud em{font-size:11px;font-style:normal}.run-hud .shell-score{align-items:center;color:#f7d397}.shell-score svg{width:18px;height:18px}
+.run-guide,.key-guide{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}.run-guide{gap:18px}.run-guide button,#backToFilm{border:1px solid var(--line);border-radius:5px;padding:7px 11px}.key-guide kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:3px 5px;color:var(--ink);font:600 10px ui-monospace,monospace}.swipe-guide{display:none}.running .camera-controls,.running .time,.running .speed,.running .progress,.running .shot{display:none}.running footer{padding-top:13px}.running .stage:after{pointer-events:none}.results{position:absolute;inset:0;display:grid;place-items:center;background:#17211d52;z-index:2}.results{pointer-events:none}.results>div{pointer-events:auto;text-align:center;background:var(--paper);color:var(--ink);border:1px solid #fff8;border-radius:12px;max-width:calc(100% - 30px);padding:25px 25px 22px;box-shadow:0 12px 45px #13201944}.results h2{font:600 23px/1.3 system-ui,sans-serif;margin:0 0 12px}.results p{font-size:13px;line-height:1.55;color:var(--muted);margin:7px 0}.results .result-stats{font-variant-numeric:tabular-nums;color:var(--ink);margin-bottom:16px}#retry{background:var(--accent);color:#fff5e3;border:1px solid var(--accent);border-radius:5px;padding:7px 14px;font-weight:600;margin-right:5px}
+@media(pointer:coarse){.key-guide{display:none}.swipe-guide{display:inline}}
+@media(max-width:650px){.translation{display:none}.ride-mode{padding:0 10px;font-size:11px;min-height:32px}.ride-mode svg{display:none}.run-hud{top:10px;left:10px;padding:8px 10px}.run-guide{gap:8px;font-size:10px}.key-guide{font-size:10px;gap:4px}.run-guide button{font-size:10px;padding:6px}.orbit-hint{font-size:8px}}
+@media(max-height:520px) and (orientation:landscape){.running footer{padding-top:4px}.run-hud{top:8px;left:10px;padding:6px 9px}}
+.run-hud{gap:15px;padding:10px 13px;align-items:center;box-shadow:0 2px 16px #182b2517;background:#20322ded}
+.run-hud .run-points{display:grid;gap:2px;border-right:1px solid #a6bcb25c;padding-right:14px}.run-points small{color:#f3ce8d;font-size:9px;letter-spacing:.13em}.run-points b{font-size:21px;letter-spacing:-.035em}.run-hud>span small,.run-hud em{white-space:nowrap}
+.run-hud .velocity{color:#ace7d9}.run-hud .velocity b{font-size:15px}
+.flight-strip{position:absolute;top:16px;right:16px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;max-width:45%;pointer-events:none}
+.flight-strip span{font:600 11px/1.4 system-ui,sans-serif;padding:5px 9px;background:#21332de8;color:#f3ecdc;border:1px solid #f4e0b752;border-radius:5px}.flight-strip .shield{color:#9ff7d9}.flight-strip .magnet{color:#ffb299}.flight-strip .gust,.flight-strip .combo{color:#ffda8a}
+.event{border-radius:5px;position:absolute;top:78px;left:16px;color:#fff2d5;background:#26362eee;box-shadow:inset 3px 0 #e4b169;padding:7px 11px;font:600 12px/1.3 system-ui,sans-serif;pointer-events:none}
+.event[data-kind=impact]{box-shadow:inset 3px 0 #ed9471}.event[data-kind=shield]{box-shadow:inset 3px 0 #83ddca}.event[data-kind=magnet]{box-shadow:inset 3px 0 #ff9982}
+.arcade-actions{display:flex;gap:5px;position:absolute;bottom:14px;right:14px;align-items:center}
+.arcade-actions button{touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center;gap:6px;min-height:37px;padding:3px 10px;background:#24332ee9;color:#fff6e1;border:1px solid #fff5;border-radius:5px;backdrop-filter:blur(6px);font-size:11px;line-height:1.25}
+.arcade-actions button:hover{background:#354b42}.arcade-actions [aria-pressed=true]{color:#fff2c2;background:#785232}
+.arcade-actions kbd{font:600 10px/1.3 ui-monospace,monospace;color:#e5ca98}
+.arcade-actions svg{width:17px;height:17px;stroke-width:1.6}.running .key-guide{flex-wrap:wrap}.running #chaseView{white-space:nowrap}
+@media(max-width:740px){.run-hud{gap:8px}.run-guide{gap:7px}.key-guide{gap:3px;font-size:10px}.run-guide button{padding:6px}}
+@media(max-width:650px){.run-hud{left:9px;top:9px;padding:7px 9px;gap:8px}.run-hud .run-points{padding-right:8px}.run-hud small,.run-hud em{font-size:9px}.run-hud b{font-size:15px}.run-hud .run-points b{font-size:18px}.flight-strip{top:60px;right:9px;max-width:92%}.event{left:9px;top:91px;font-size:10px}.arcade-actions{right:8px;bottom:9px;gap:4px}.arcade-actions button{padding:4px 7px}.key-guide .extra-key{display:none}}
+@media(pointer:coarse){.running .key-guide{display:none}.arcade-actions button{min-width:45px;min-height:44px}.arcade-actions kbd{display:none}}
+@media(max-width:480px){.running .swipe-guide{max-width:190px;line-height:1.5}.running .key-guide{max-width:185px;line-height:1.4}.arcade-actions svg{width:14px;height:14px}}
+@media(max-height:520px) and (orientation:landscape){.flight-strip{top:8px}.event{top:64px}.arcade-actions{bottom:7px}}
+.touch-pad{display:none}
+@media(any-pointer:coarse){
+ main{padding-left:max(var(--edge),env(safe-area-inset-left));padding-right:max(var(--edge),env(safe-area-inset-right));padding-top:env(safe-area-inset-top);min-height:270px}
+ .touch-pad{--key:clamp(44px,10.8vw,54px);position:absolute;left:9px;bottom:9px;display:grid;grid-template-columns:repeat(3,var(--key));grid-template-rows:repeat(2,var(--key));gap:3px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+ .touch-pad button{display:grid;place-items:center;align-content:center;gap:1px;padding:2px;background:#20332fe8;color:#fff6df;border:1px solid #fff7;border-radius:9px;touch-action:none}
+ .touch-pad button.pressed,.touch-pad button:active{color:#fff7d9;background:#844e2f;border-color:#edc490}
+ .touch-pad .up{grid-column:2;grid-row:1}.touch-pad .left{grid-column:1;grid-row:2}.touch-pad .down{grid-column:2;grid-row:2}.touch-pad .right{grid-column:3;grid-row:2}
+ .touch-pad svg{width:16px;height:16px;stroke-width:2}.touch-pad small{font-size:9px;line-height:1}
+ .arcade-actions{display:grid;grid-template-columns:repeat(2,minmax(52px,1fr));gap:4px;bottom:9px;right:9px}
+ .arcade-actions button{min-height:44px;padding:4px 6px;border-radius:8px;-webkit-touch-callout:none;-webkit-user-select:none}
+ .arcade-actions kbd,.running .key-guide{display:none}.swipe-guide{display:inline}.running .play,.running #chaseView{min-height:44px;min-width:44px}
+}
+@media(any-pointer:coarse) and (max-height:460px) and (orientation:landscape){
+ .touch-pad{--key:44px;left:6px;bottom:6px}.arcade-actions{right:6px;bottom:6px}.running footer{padding-bottom:max(2px,env(safe-area-inset-bottom))}
+}
+</style>
+</head><body>
+<svg class="icons" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="i-soundoff" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6m0-6-5 6"/></symbol><symbol id="i-sound" viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol><symbol id="i-full" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m6 0h5v-5"/></symbol><symbol id="i-shrink" viewBox="0 0 24 24"><path d="M4 9h5V4m6 0v5h5M4 15h5v5m6 0v-5h5"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><path d="M5 3h5v18H5zm9 0h5v18h-5z"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="m5 2 16 10L5 22z"/></symbol><symbol id="i-camera" viewBox="0 0 24 24"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></symbol>
+</defs></svg>
+<main id="viewer">
+<header><div class="identity"><div class="mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5.5 26.4c3.6-.9 5.4-3.4 6.8-6.2 1.9-3.8 3.6-5.8 6.9-5.6 2.2.1 3.4 1.4 3.1 3.3-.3 2.1-2.1 4-3.5 5.4 3.4-.6 5.1-2.2 5.7-4.5l.1-4.4c.1-3.4 1.7-5.7 4.4-5.5 1.6.1 2.6 1.2 2.5 2.4l5.3 2.6-5.4-.4c1.5 1.1 3 1.3 4.8 1.2-1.9 1.8-5.2 1.1-6.8-.5-1.2.7-.8 3.4-1.1 5.8-.6 5.4-5.4 9.2-11.5 9.1-4.1-.1-7.7-.7-11.3-2.7Z"/><circle cx="29.5" cy="11.1" r=".65" fill="#9f492f"/></svg></div><h1>Pelican <em>Ride</em></h1><span class="translation">鹈鹕骑行</span></div>
+<div class="top-controls"><button id="rideMode" class="ride-mode" aria-pressed="false" title="开始无尽骑行 · W A S D" disabled><svg viewBox="0 0 24 24"><path d="m4 19 6-14h4l6 14M12 6v3m0 4v2m0 3v2"/></svg><span>开始骑行</span></button><button class="audio-btn" id="audio" aria-pressed="false" aria-label="开启海浪与骑行声" title="开启海浪与骑行声"><svg><use href="#i-soundoff"/></svg><span>环境音</span></button><button class="full-btn" id="full" aria-label="进入全屏" title="进入全屏"><svg><use href="#i-full"/></svg></button></div></header>
+<section class="stage" id="stage" aria-label="海岸木栈道上的鹈鹕骑行三维动画">
+<canvas id="film" aria-label="鹈鹕正在海边骑一辆青绿色自行车。拖动或方向键可 360° 环视，滚轮或双指缩放。按 W A S D 开始骑行。" tabindex="0"></canvas>
+<div class="shot"><svg aria-hidden="true"><use href="#i-camera"/></svg><span id="shotName">跟拍镜头</span><span class="orbit-hint">拖动 360° 环视</span></div>
+<div id="runHud" class="run-hud" hidden><span class="run-points"><small>得分</small><b id="points">0</b></span><span><b id="meters">0</b><em>m</em></span><span class="shell-score" aria-label="贝壳"><svg viewBox="0 0 24 24"><path d="M10 20c-2-2-8-7-8-11 0-2 2-3 4-3 1-3 4-4 6-2 3-2 6-1 7 2 2-1 4 1 3 4-1 4-5 8-8 10zM6 8l5 9m1-12v12m6-9-5 9"/></svg><b id="shells">0</b></span><span class="velocity"><b id="velocity">29</b><em>km/h</em></span></div>
+<div class="flight-strip" id="flightStrip" hidden><span id="altTag" hidden></span><span class="shield" id="shieldTag" hidden>护盾</span><span class="magnet" id="magnetTag" hidden></span><span class="gust" id="gustTag" hidden></span><span class="combo" id="comboTag" hidden></span></div>
+<div class="event" id="runEvent" role="status" hidden></div>
+<div class="touch-pad" id="touchPad" role="group" aria-label="方向控制" hidden>
+<button class="up" data-drive="jump" aria-label="跳跃"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg><small>跳跃</small></button>
+<button class="left" data-drive="left" aria-label="向左"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><small>向左</small></button>
+<button class="down" data-drive="duck" aria-label="低身"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg><small>低身</small></button>
+<button class="right" data-drive="right" aria-label="向右"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg><small>向右</small></button>
+</div>
+<div class="arcade-actions" id="arcadeActions" role="group" aria-label="飞行与特技" hidden>
+<button id="flyButton" aria-pressed="false" title="起飞或降落 · F"><svg viewBox="0 0 24 24"><path d="M3 16c6 0 8-8 17-11-1 6-4 11-10 12l-4-1-3 3m5-5 8-5"/></svg><kbd>F</kbd><span>起飞</span></button>
+<button id="boostButton" aria-pressed="false" title="按住持续加速 · Shift"><svg viewBox="0 0 24 24"><path d="m4 6 6 6-6 6m7-12 6 6-6 6"/></svg><kbd>Shift</kbd>加速</button>
+<button id="rollButton" title="空中横滚 · Q"><svg viewBox="0 0 24 24"><path d="M4 11a8 6 0 1 1 2 5m-2 2v-6h6"/></svg><kbd>Q</kbd>横滚</button>
+<button id="flipButton" title="空中后空翻 · E"><svg viewBox="0 0 24 24"><path d="M9 19c4 3 9-2 9-8 0-4-2-7-5-7s-5 3-5 7m-3-4 3 4 4-3"/></svg><kbd>E</kbd>后空翻</button></div>
+<div id="resultPanel" class="results" role="region" aria-label="骑行结果" hidden><div><h2>本次骑行结束</h2><p id="hitMessage"></p><p class="result-stats" id="resultStats"></p><p id="bestStats" class="result-stats"></p><button id="retry">再骑一次</button><button id="backToFilm">返回观景</button></div></div>
+<div class="load" id="loading" role="status"><picture class="poster" aria-hidden="true"><source media="(max-aspect-ratio: 4/5)" srcset="__TALL_POSTER__"><img src="__WIDE_POSTER__" alt=""></picture><div class="loading-note"><span class="spin"></span><span id="status">正在准备海岸场景…</span></div></div></section>
+<footer><label class="sr-only" for="timeline">动画进度</label><input type="range" min="0" max="32" step="0.01" value="0" id="timeline" class="progress">
+<div class="bottom-controls"><div class="control-left"><button class="play" id="play" aria-label="暂停" title="播放或暂停 · 空格"><svg><use href="#i-pause"/></svg></button><div class="time"><span id="elapsed">00:00</span><span class="total"> / 00:32</span></div><button class="speed" id="speed" aria-label="播放速度 1 倍，点击切换" title="切换播放速度">1×</button></div>
+<div id="runGuide" class="run-guide" hidden><span class="key-guide" id="keyGuide"><kbd>A</kbd><kbd>D</kbd><span id="lateralGuide">换道</span><kbd>W</kbd><span id="upGuide">跳跃</span><kbd>S</kbd><span id="downGuide">低身</span><span class="extra-key"> · 拖动环视</span></span><span class="swipe-guide" id="swipeGuide">左右换道 · 上滑跳跃 · 下滑低身</span><button id="chaseView" title="回到追尾视角 · Home">复位镜头</button></div>
+<div class="camera-controls"><span class="camera-label"><svg><use href="#i-camera"/></svg>镜头</span><div class="switcher" role="group" aria-label="镜头选择"><button data-shot="0" aria-pressed="true">跟拍</button><button data-shot="1" aria-pressed="false">特写</button><button data-shot="2" aria-pressed="false">广角</button><button data-shot="3" aria-pressed="false">传动</button></div></div></div></footer>
+</main>
+<noscript>请启用 JavaScript 以播放 3D 动画。</noscript>
+<script id="skyAsset" type="application/octet-stream">__PANO__</script>
+<script id="sandAsset" type="application/octet-stream">__SAND__</script>
+<script id="lightAsset" type="application/octet-stream">__LIGHT__</script>
+<!-- Panorama and HDR lighting: Umhlanga Sunrise, Greg Zaal, via Poly Haven (CC0).
+     https://polyhaven.com/a/umhlanga_sunrise
+     Instrument Serif by Rodrigo Fuenzalida and Jordan Bell, SIL Open Font License.
+     Original pelican, bicycle, terrain, rigging, animation and sound are generated in this document. -->
+<script>__SCRIPT__</script>
+</body></html>

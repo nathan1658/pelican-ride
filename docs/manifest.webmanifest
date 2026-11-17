@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "Pelican Ride",
+  "short_name": "Pelican Ride",
+  "description": "Ride, fly and perform aerial stunts along a sunrise boardwalk.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#f4f1e9",
+  "background_color": "#f4f1e9",
+  "icons": [
+    {"src": "icons/pelican-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icons/pelican-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
